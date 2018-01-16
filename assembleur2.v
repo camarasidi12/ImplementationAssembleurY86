@@ -13,7 +13,7 @@ Import ListNotations.
   |1 => true
   |(S p) => false (*theoreme pour prouver que ce cas narrive jamais*)
   end.*)
-
+Require Import NPeano.
 Fixpoint brem (n:nat) : bool :=
   if (beq_nat ((n/2)*2) n)
   then false
@@ -21,6 +21,7 @@ Fixpoint brem (n:nat) : bool :=
 
 (*
 n: nat a encoder
+SearchAbout()
 k: encoder sur k bits
 TODO: fonction decode : (list bool) -> nat
 *)
@@ -34,6 +35,7 @@ Fixpoint encode (n:nat)(k:nat):(list bool):=
 (*TODO:
 -displacement: inter_code_car, eval_inter_code_car, instruction, decode_ins_icc
  *)
+
 
 (*Representation dun code intermediaire qui va generer du binaire*)
 Inductive inter_code_car : Type :=
