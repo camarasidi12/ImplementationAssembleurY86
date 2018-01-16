@@ -161,12 +161,11 @@ Proof.
   reflexivity.
   inversion H1.
   
-
 (*
   
-  Lemma eq_length: forall (n:nat) (k:nat),k > ... -> (length(encode n k))= k.
+ Lemma eq_length: forall (n:nat) (k:nat),k > ... -> (length(encode n k))= k.
                                                   
 Lemma eq_decod_encode: forall (l:list bool),(encode(decode l) (length l))=l.
 
-*)
 
+*)
