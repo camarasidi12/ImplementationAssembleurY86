@@ -4,6 +4,7 @@ Require Import Coq.Arith.EqNat.
 Require Import Coq.omega.Omega.
 Require Import Coq.Lists.List.
 Require Import Coq.Logic.FunctionalExtensionality.
+Require Import Coq.Init.Nat.
 Import ListNotations.
 (*-------------------Representation-Binaire-------------------------------------*)
 (*ou reecrire fonction mod2 pour rendre que true ou false*)
@@ -30,6 +31,8 @@ Fixpoint encode (n:nat)(k:nat):(list bool):=
   |0 => []
   |(S p) => (encode (n/2) p)++(brem n)::[]
   end.
+
+Compute (encode 5 4).
 
 (*-------------------Representation-Instructions--------------------------------*)
 (*TODO:
@@ -124,4 +127,27 @@ Compute (decode_ins halt).
 Compute (decode_ins nop).
 Compute (decode_ins (rrmovl EAX ECX)).
 Compute (decode_ins (irmovl 15 EBX)).
+
+
+(* ********************************************************************** *)
+(*                              DECODE                                    *)
+(* ********************************************************************** *)
+
+
+
+Fixpoint decode (l : list bool) : (nat):=
+  match l with
+  | [] => 0
+  | e::rest => match e with
+         | false => decode rest
+         | true => (decode rest) + (pow 2 ((length rest)))
+         end
+  end.
+
+
+Compute (decode [false; true; true]).
+Compute (decode [false;false;false;false;     false;true;false;true]).
+
+
+
 
