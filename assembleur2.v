@@ -151,22 +151,65 @@ Fixpoint decode (l : list bool) : (nat):=
 Compute (decode [false; true; true]).
 Compute (decode [false;false;false;false;     false;true;false;true]).
 
-Lemma eq_encode_decod: forall (n:nat) (k:nat), ((pow 2 k)>n)->(decode (encode n k))=n.
+Lemma eq_encode_decod: forall k (n:nat), ((pow 2 k)>n)->(decode (encode n k))=n.
 Proof.
-  intros.
-  induction k.  
-  simpl.
-  simpl  in H.
-  inversion H.
-  reflexivity.
-  inversion H1.
-  
+  intros k.  
+  induction k.
+  - intros.
+    simpl  in H.
+    inversion H.
+    + reflexivity.
+    + inversion H1.
+  - intros.
+    Opaque div.
+    simpl encode.
+    assert (forall l l', decode (l++l') = (decode l) * pow 2 (length l') + decode l').
+      { admit. }
+      rewrite H0 .
+      rewrite IHk.
+      simpl.
+      admit.
+      simpl in H.
+      replace (2 ^ k + (2 ^ k + 0)) with (2 * (2 ^ k)) in H.
+      assert (2 * 2 ^ k > 2* (n/2)).
+      { admit.
+        
+      }
+      apply Nat.mul_lt_mono_pos_l with (p:=2).
+      apply lt_0_Sn.
+      apply H1.
+      omega.
+Qed.
 
+(*      SearchAbout lt.
+      simpl.
+      simpl
+      * reflexivity.
+      * admit.
+
+    (*    n / 2 * 2 + (if brem n then 1 else 0) = n * a rpouver comm lemma*)
+
+  induction n.
+  - induction k; simpl.
+    + auto.
+    + assert (forall l l', decode (l++l') = (decode l) * pow 2 (length l') + decode l').
+      { admit. }
+      rewrite H0 .
+      rewrite IHk.
+      * reflexivity.
+      * admit.
+  - simpl.
+    simpl  in H.
+    inversion H.
+    + reflexivity.
+    + inversion H1.
+  - Opaque div.
+    simpl encode. 
 (*
   
-  Lemma eq_length: forall (n:nat) (k:nat),k > ... -> (length(encode n k))= k.
+ Lemma eq_length: forall (n:nat) (k:nat),k > ... -> (length(encode n k))= k.
                                                   
 Lemma eq_decod_encode: forall (l:list bool),(encode(decode l) (length l))=l.
 
-*)
 
+*)
