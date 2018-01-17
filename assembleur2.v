@@ -150,6 +150,20 @@ Fixpoint decode (l : list bool) : (nat):=
 
 Compute (decode [false; true; true]).
 Compute (decode [false;false;false;false;     false;true;false;true]).
+(*SearchAbout not.
+Lemma brem_S:forall n:nat, brem (S n)=negb ( brem n).
+  intros.
+  destruct n. reflexivity.
+  SearchAbout plus S.
+  simpl.
+simpl.  
+Lemma eq_div_brem:forall n, n / 2 * 2 + (if brem n then 1 else 0) = n.
+  induction n. reflexivity.
+  Opaque div.
+  simpl. 
+  
+  SearchAbout   div .
+intros n. *)
 
 Lemma eq_encode_decod: forall k (n:nat), ((pow 2 k)>n)->(decode (encode n k))=n.
 Proof.
@@ -164,16 +178,46 @@ Proof.
     Opaque div.
     simpl encode.
     assert (forall l l', decode (l++l') = (decode l) * pow 2 (length l') + decode l').
-      { admit. }
+    { intros.
+      induction l. simpl. reflexivity. case a. simpl.
+      rewrite IHl. rewrite app_length.
+      rewrite Nat.pow_add_r.
+      rewrite mult_plus_distr_r. omega.
+      simpl.
+      rewrite IHl.
+      reflexivity.
+    (*  SearchAbout mult.
+      replace (decode l * 2 ^ length l'+decode l'+ 2 ^ length (l ++ l'))
+      with
+      (decode l * 2 ^ length l'+ 2 ^ length (l ++ l')+decode l').
+      
+      replace
+        (decode l * 2 ^ length l'+ 2 ^ length (l ++ l'))
+        with
+     ( (decode l + 2 ^ length l) * 2 ^ length l').
+      reflexivity. 
+       replace
+        (decode l * 2 ^ length l'+ 2 ^ length (l ++ l'))
+        with
+     ( (decode l + 2 ^ length l) * 2 ^ length l').
+       reflexivity.
+        replace
+        (decode l * 2 ^ length l'+ 2 ^ length (l ++ l'))
+        with
+     ( (decode l + 2 ^ length l) * 2 ^ length l').
+       reflexivity.*)
+       
+    }
       rewrite H0 .
       rewrite IHk.
-      simpl.
+      simpl. unfold brem.
       admit.
       simpl in H.
       replace (2 ^ k + (2 ^ k + 0)) with (2 * (2 ^ k)) in H.
       assert (2 * 2 ^ k > 2* (n/2)).
-      { admit.
-        
+      {        admit.
+
+       (* induction n. assumption. inversion H.*)
       }
       apply Nat.mul_lt_mono_pos_l with (p:=2).
       apply lt_0_Sn.
