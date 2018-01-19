@@ -210,15 +210,41 @@ Proof.
     }
       rewrite H0 .
       rewrite IHk.
-      simpl. unfold brem.
+      simpl.
+      induction n. simpl.  
+       rewrite Nat.div_0_l. reflexivity.
+       omega. simpl. rewrite <-Nat.add_1_l. SearchAbout plus div.
+       assert(forall a b:nat,(a+b)/2=a/2+b/2).
+       {
+         induction a. simpl. reflexivity.  rewrite <-Nat.add_1_l.
+         SearchAbout plus.
+         rewrite plus_comm with (n:=1) (m:=a).
+         intros b.
+         rewrite <-plus_assoc with (n:=a) (m:=1) (p:=b).
+         replace b with 0. simpl.  rewrite Nat.div_0_l.
+         trivial. omega.  induction b. reflexivity. 
+         rewrite<- IHb.
+          admit.         
+       }
+       
+      
+      unfold brem.
       admit.
       simpl in H.
       replace (2 ^ k + (2 ^ k + 0)) with (2 * (2 ^ k)) in H.
+      SearchAbout lt div.
       assert (2 * 2 ^ k > 2* (n/2)).
-      {        admit.
+      { assert( 2 * (n / 2)<=n).
+        {
+          apply  Nat.mul_div_le with (b:=2)(a:=n). omega.
+        }
+        SearchAbout (_>_).
 
-       (* induction n. assumption. inversion H.*)
+        apply gt_le_trans with (n:=(2*2^k)) (m:=n) (p:=2*(n/2)).
+        apply H.
+        apply H1.
       }
+      SearchAbout mult lt .
       apply Nat.mul_lt_mono_pos_l with (p:=2).
       apply lt_0_Sn.
       apply H1.
