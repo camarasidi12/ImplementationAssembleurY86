@@ -228,8 +228,37 @@ Proof.
        }
        
       
-      unfold brem.
-      admit.
+       unfold brem.
+       rewrite H1 with (a:=1) (b:=n).
+       
+       rewrite Nat.div_small with(a:=1)(b:=2). simpl.
+ assert( 2 * (n / 2)<=n).
+        {
+          apply  Nat.mul_div_le with (b:=2)(a:=n). omega.
+        }
+        SearchAbout S .
+        assert(n<S n). apply gt_Sn_n.
+        
+        SearchAbout (_<_).
+        
+        rewrite mult_comm with (n:=n/2) (m:=2).
+        SearchAbout (_->_).
+        assert( 2 * (n / 2)<S n).
+        {
+        apply le_lt_trans with (m:=n) (p:=S n) (n:=2*(n/2)).
+        apply H2. apply H3.
+        }
+        apply Nat.lt_neq in H4. SearchAbout beq_nat.
+         rewrite<- Nat.eqb_neq  with (x:=(2*(n/2))) (y:=(S n)) in H4.
+         rewrite H4.
+        
+          
+        }
+        
+       
+        
+        rewrite le_lt_trans with (m:=n) (p:=S n) (n:=2*(n/2)).
+        admit.
       simpl in H.
       replace (2 ^ k + (2 ^ k + 0)) with (2 * (2 ^ k)) in H.
       SearchAbout lt div.
