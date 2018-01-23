@@ -18,7 +18,7 @@ Import ListNotations.
 SearchAbout div.
 SearchAbout pow S.
 
-Fixpoint brem (n:nat) : bool :=
+Definition brem (n:nat) : bool :=
   if (beq_nat ((n/2)*2) n)
   then false
   else true.
@@ -165,6 +165,23 @@ Lemma eq_div_brem:forall n, n / 2 * 2 + (if brem n then 1 else 0) = n.
   SearchAbout   div .
 intros n. *)
 
+
+
+Lemma decode_concat: forall
+    (l:list bool) (l':list bool), decode (l++l') = (decode l) * pow 2 (length l') + decode l'.
+
+  intros.
+      induction l. simpl. reflexivity. case a. simpl.
+      rewrite IHl. rewrite app_length.
+      rewrite Nat.pow_add_r.
+      rewrite mult_plus_distr_r. omega.
+      simpl.
+      rewrite IHl.
+      reflexivity.   
+Qed.
+
+
+
 Lemma eq_encode_decod: forall k (n:nat), ((pow 2 k)>n)->(decode (encode n k))=n.
 Proof.
   intros k.  
@@ -177,41 +194,49 @@ Proof.
   - intros.
     Opaque div.
     simpl encode.
-    assert (forall l l', decode (l++l') = (decode l) * pow 2 (length l') + decode l').
-    { intros.
-      induction l. simpl. reflexivity. case a. simpl.
-      rewrite IHl. rewrite app_length.
-      rewrite Nat.pow_add_r.
-      rewrite mult_plus_distr_r. omega.
-      simpl.
-      rewrite IHl.
-      reflexivity.
-    (*  SearchAbout mult.
-      replace (decode l * 2 ^ length l'+decode l'+ 2 ^ length (l ++ l'))
-      with
-      (decode l * 2 ^ length l'+ 2 ^ length (l ++ l')+decode l').
-      
-      replace
-        (decode l * 2 ^ length l'+ 2 ^ length (l ++ l'))
-        with
-     ( (decode l + 2 ^ length l) * 2 ^ length l').
-      reflexivity. 
-       replace
-        (decode l * 2 ^ length l'+ 2 ^ length (l ++ l'))
-        with
-     ( (decode l + 2 ^ length l) * 2 ^ length l').
-       reflexivity.
-        replace
-        (decode l * 2 ^ length l'+ 2 ^ length (l ++ l'))
-        with
-     ( (decode l + 2 ^ length l) * 2 ^ length l').
-       reflexivity.*)
-       
-    }
-      rewrite H0 .
+    rewrite decode_concat with (l:=encode (n/2) k) (l':=[brem n]).
+   
       rewrite IHk.
+      Focus 2.
+      { unfold gt.
+        apply Nat.mul_lt_mono_pos_l with (p:=2).
+        - omega.
+        - apply le_lt_trans with (m:=n).
+          + apply Nat.mul_div_le.
+            omega.
+          + assumption.
+      }
+      Unfocus.
       simpl.
-      induction n. simpl.  
+      assert ((if brem n then 1 else 0) = n mod 2).
+      { destruct (brem n) eqn:heq.
+        
+        - admit.
+        - admit. }
+      rewrite H0.
+      rewrite (div_mod n 2) at 3;omega.
+Qed.
+
+
+
+
+(*
+
+Lemma brem_mod: forall (n:nat),(brem n)=true->(( n mod 2)=1).
+  induction n.
+  simpl.
+  unfold brem.
+  rewrite Nat.div_0_l.
+  simpl.*)
+  
+  
+
+(*   
+
+
+
+
+        induction n. simpl.  
        rewrite Nat.div_0_l. reflexivity.
        omega. simpl. rewrite <-Nat.add_1_l. SearchAbout plus div.
        assert(forall a b:nat,(a+b)/2=a/2+b/2).
@@ -223,7 +248,7 @@ Proof.
          rewrite <-plus_assoc with (n:=a) (m:=1) (p:=b).
          replace b with 0. simpl.  rewrite Nat.div_0_l.
          trivial. omega.  induction b. reflexivity. 
-         rewrite<- IHb.
+         rewrite<- IHb. 
           admit.         
        }
        
@@ -232,7 +257,7 @@ Proof.
        rewrite H1 with (a:=1) (b:=n).
        
        rewrite Nat.div_small with(a:=1)(b:=2). simpl.
- assert( 2 * (n / 2)<=n).
+       assert( 2 * (n / 2)<=n).
         {
           apply  Nat.mul_div_le with (b:=2)(a:=n). omega.
         }
@@ -280,7 +305,7 @@ Proof.
       omega.
 Qed.
 
-(*      SearchAbout lt.
+   SearchAbout lt.
       simpl.
       simpl
       * reflexivity.
@@ -306,9 +331,29 @@ Qed.
     simpl encode. 
 (*
   
- Lemma eq_length: forall (n:nat) (k:nat),k > ... -> (length(encode n k))= k.
+ Lemma eq_length: forall (n:nat) (k:nat),-> (length(encode n k))= k.
                                                   
 Lemma eq_decod_encode: forall (l:list bool),(encode(decode l) (length l))=l.
 
 
 *)
+  (*  SearchAbout mult.
+      replace (decode l * 2 ^ length l'+decode l'+ 2 ^ length (l ++ l'))
+      with
+      (decode l * 2 ^ length l'+ 2 ^ length (l ++ l')+decode l').
+      
+      replace
+        (decode l * 2 ^ length l'+ 2 ^ length (l ++ l'))
+        with
+     ( (decode l + 2 ^ length l) * 2 ^ length l').
+      reflexivity. 
+       replace
+        (decode l * 2 ^ length l'+ 2 ^ length (l ++ l'))
+        with
+     ( (decode l + 2 ^ length l) * 2 ^ length l').
+       reflexivity.
+        replace
+        (decode l * 2 ^ length l'+ 2 ^ length (l ++ l'))
+        with
+     ( (decode l + 2 ^ length l) * 2 ^ length l').
+       reflexivity.*)
